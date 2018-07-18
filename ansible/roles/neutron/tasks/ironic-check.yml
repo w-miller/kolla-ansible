@@ -4,3 +4,8 @@
   when:
     - enable_ironic | bool
     - neutron_plugin_agent != "openvswitch"
+
+- fail: msg="Ironic must be enabled when using networking-baremetal/ironic-neutron-agent"
+  when:
+    - enable_ironic_neutron_agent | bool
+    - not (enable_ironic | bool)

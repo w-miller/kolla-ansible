@@ -7,6 +7,8 @@ tenant_network_types = {{ neutron_tenant_network_types }}
 {% if neutron_plugin_agent == "openvswitch" %}
 {% if enable_hyperv | bool %}
 mechanism_drivers = openvswitch,hyperv
+{% elif enable_ironic_neutron_agent | bool %}
+mechanism_drivers = openvswitch,baremetal
 {% else %}
 mechanism_drivers = openvswitch,l2population
 {% endif %}

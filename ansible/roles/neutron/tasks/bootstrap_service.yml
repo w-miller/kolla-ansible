@@ -65,3 +65,26 @@
     - neutron_server.host_in_groups | bool
   run_once: True
   delegate_to: "{{ groups[neutron_server.group][0] }}"
+
+- name: Running Ironic Neutron agent bootstrap container
+  vars:
+    ironic_neutron_agent: "{{ neutron_services['ironic-neutron-agent'] }}"
+  become: true
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    detach: False
+    environment:
+      KOLLA_BOOTSTRAP:
+      KOLLA_CONFIG_STRATEGY: "{{ config_strategy }}"
+    image: "{{ ironic_neutron_agent.image }}"
+    labels:
+      BOOTSTRAP:
+    name: "bootstrap_ironic_neutron_agent"
+    restart_policy: "never"
+    volumes: "{{ ironic_neutron_agent.volumes }}"
+  when:
+    - enable_ironic_neutron_agent | bool
+    - ironic_neutron_agent.host_in_groups | bool
+  run_once: True
+  delegate_to: "{{ groups[ironic_neutron_agent.group][0] }}"
