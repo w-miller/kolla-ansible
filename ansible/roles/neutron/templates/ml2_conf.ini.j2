@@ -16,7 +16,7 @@ tenant_network_types = {{ neutron_tenant_network_types }}
 {% elif neutron_plugin_agent != "opendaylight" %}
 {% do mechanism_drivers.append("l2population") %}
 {% endif %}
-{% if enable_networking_baremetal | bool %}
+{% if enable_ironic_neutron_agent | bool %}
 {% do mechanism_drivers.append("baremetal") %}
 {% endif %}
 mechanism_drivers = {{ mechanism_drivers | join(",") }}
