@@ -46,6 +46,7 @@
   vars:
     service_name: "{{ item.key }}"
     services_need_neutron_conf:
+      - "ironic-neutron_agent"
       - "neutron-dhcp-agent"
       - "neutron-l3-agent"
       - "neutron-linuxbridge-agent"
@@ -317,6 +318,22 @@
   when:
     - neutron_vpnaas_agent.enabled | bool
     - neutron_vpnaas_agent.host_in_groups | bool
+
+- name: Copying over ironic_neutron_agent.ini
+  become: true
+  vars:
+    service_name: "ironic-neutron-agent"
+    ironic_neutron_agent: "{{ neutron_services[service_name] }}"
+  merge_configs:
+    sources:
+      - "{{ role_path }}/templates/ironic_neutron_agent.ini.j2"
+      - "{{ node_custom_config }}/neutron/ironic_neutron_agent.ini"
+    dest: "{{ node_config_directory }}/{{ service_name }}/ironic_neutron_agent.ini"
+    mode: "0660"
+  register: ironic_neutron_agent_ini
+  when:
+    - ironic_neutron_agent.enabled | bool
+    - ironic_neutron_agent.host_in_groups | bool
   notify:
     - "Restart {{ service_name }} container"
 
