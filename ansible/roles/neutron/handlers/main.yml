@@ -344,9 +344,8 @@
     volumes: "{{ service.volumes }}"
     privileged: "{{ service.privileged | default(False) }}"
   when:
-    - kolla_action != "config"
+    - action != "config"
     - service.enabled | bool
     - service.host_in_groups | bool
     - config_json | changed
       or neutron_conf | changed
-      or neutron_ml2_conf | changed

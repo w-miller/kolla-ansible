@@ -46,7 +46,7 @@
   vars:
     service_name: "{{ item.key }}"
     services_need_neutron_conf:
-      - "ironic-neutron_agent"
+      - "ironic-neutron-agent"
       - "neutron-dhcp-agent"
       - "neutron-l3-agent"
       - "neutron-linuxbridge-agent"
