@@ -4,22 +4,19 @@
 type_drivers = {{ neutron_type_drivers }}
 tenant_network_types = {{ neutron_tenant_network_types }}
 
-{% if neutron_plugin_agent == "opendaylight" %}
-{% set mechanism_drivers = [opendaylight_mechanism_driver] %}
-{% elif neutron_plugin_agent == "openvswitch" %}
-{% set mechanism_drivers = ["openvswitch"] %}
-{% elif neutron_plugin_agent == "linuxbridge" %}
-{% set mechanism_drivers = ["linuxbridge"] %}
-{% endif %}
+{% if neutron_plugin_agent == "openvswitch" %}
 {% if enable_hyperv | bool %}
-{% do mechanism_drivers.append("hyperv") %}
-{% elif neutron_plugin_agent != "opendaylight" %}
-{% do mechanism_drivers.append("l2population") %}
+mechanism_drivers = openvswitch,hyperv
+{% elif enable_ironic_neutron_agent | bool %}
+mechanism_drivers = openvswitch,baremetal
+{% else %}
+mechanism_drivers = openvswitch,l2population
 {% endif %}
-{% if enable_ironic_neutron_agent | bool %}
-{% do mechanism_drivers.append("baremetal") %}
+{% elif neutron_plugin_agent == "linuxbridge" %}
+mechanism_drivers = linuxbridge,l2population
+{% elif neutron_plugin_agent == "opendaylight" %}
+mechanism_drivers = {{ opendaylight_mechanism_driver }}
 {% endif %}
-mechanism_drivers = {{ mechanism_drivers | join(",") }}
 
 {% if neutron_extension_drivers %}
 extension_drivers = {{ neutron_extension_drivers|map(attribute='name')|join(',') }}
